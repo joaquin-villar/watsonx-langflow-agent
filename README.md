@@ -15,14 +15,14 @@ By the end of the workshop you've learned:
 3. How to use **watsonx.ai** to use foundational models (LLMs)
 4. How to use **Langflow** to create **intelligent agents** utilizing multiple tools
 5. How to utilise the Customer Support Agent flow in a **customer facing app**
-6. How to publish the Customer Support agent as an **MCP server** and us it in Claude desktop
+6. How to publish the Customer Support agent as an **MCP server** and use it in Claude desktop
 
 ## 🛠️ Prerequisites
 This workshop assumes you have access to:
 1. [A Github account](https://github.com)
 
 During the course, you'll gain access to the following by signing up for free:
-1. [DataStax Astra DB](https://astra.datastax.com) (you can sign up through your **public** Github account)
+1. [DataStax Astra DB](https://astra.datastax.com) (sign up through Google, your **public** Github account or manually with an email address)
 2. [IBM watsonx.ai](https://www.ibm.com/products/watsonx-ai) (you can sign up for a free trial)
 3. [DataStax Langflow](https://langflow.org)
 
@@ -53,7 +53,7 @@ Make sure you have a vector-capable Astra database (get one for free at [astra.d
     *(You may also need to enable the appropriate LLM model in your project, such as `ibm/granite-3-3-8b-instruct` or similar.)*
 
 ### Get access to Langflow
-There are several way to gain access to Langflow. Pick the one that suits you best 😊:
+There are several ways to gain access to Langflow. Pick the one that suits you best 😊:
 - [Langflow desktop](https://www.langflow.org/desktop) (currently only for Mac)
 - [Managed Langflow on Astra](https://astra.datastax.com/langflow)
 - (easiest 🤩) Just follow the instructions and use Github Codespaces in this tuturial
@@ -91,11 +91,19 @@ To make life easier, we'll use the awesome Github Codespace functionality. Githu
     ```
     ![run-langflow](./assets/run-langflow.png)
 
-    This starts Langflow and opens a port to your Codespace in the cloud. In case you lose track of the URL to Langflow, just click on `PORTS` in the terminal window.
+    This starts Langflow and opens a port to your Codespace in the cloud. Click `Make Public` to ensure you can access Langflow from anywhere on the internet.
 
-    ⚠️ Ensure you set the Port Visibility to Public, especially important for the MCP server part later on in this tutorial!
+    ![codespace-forward-port](./assets/codespace-forward-port.png)
 
-    ![public-port](./assets/public-port.png)
+    Now navigate to `PORTS` which shows you all forwarded ports from the Codespace, click on the `Forwarded Address` for Langflow and click the globe icon to open Langflow in a browser
+
+    ![codespace-ports](./assets/codespace-ports.png)
+
+    💡 In case you lose track of the URL to Langflow, just click on `PORTS` again in the terminal window.
+
+    ⚠️ Ensure the Port Visibility is set to Public, especially important for the MCP server part later on in this tutorial!
+
+    ![codespace-public-port](./assets/public-port.png)
 
 🎉 Congrats! You finished the set-up part of the workshop. Now for the fun part!
 
@@ -341,7 +349,7 @@ In this step we'll create a simple Python app that runs the Langflow flow.
     - ⚠️ This is the only time you'll see it, so make sure you save it somewhere handy!
 
 Let's run it!  
-Return to your Codespaces Cloud IDE and open a new Terminal window by clicking the `+` sign:
+Return to your Codespaces Cloud IDE and open a new `TERNINAL` window by clicking the `+` sign:
 
 ![codespaces-new-terminal](./assets/codespaces-new-terminal.png)
 
