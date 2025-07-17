@@ -3,6 +3,8 @@
 ## 🎯 Goal of the workshop
 Learn how to build a powerful, intelligent customer support agent using **DataStax Langflow**. You’ll start by creating a simple chatbot with **watsonx.ai** (IBM's generative AI platform), then enrich it with retrieval-augmented generation (RAG) by connecting it to your own FAQ knowledge base using **DataStax Astra DB**. Finally, you’ll add tools such as order lookups, product info access, calculators, and web tools to make your agent truly agentic—capable of reasoning, taking actions, and handling real-world customer support scenarios.
 
+![screenshot](./assets/screenshot.png)
+
 Our fully functional Customer Support Agent will be able to:
 - Answer FAQs (unstructured documents) using vector-based document search
 - Retrieve live order and product details from structured data
