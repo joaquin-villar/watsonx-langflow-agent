@@ -122,7 +122,7 @@ with st.sidebar:
     st.markdown("""
     This customer support agent is powered by:
     - Langflow for Agentic orchestration
-    - OpenAI for natural language understanding
+    - Watsonx.ai for natural language understanding
     - Astra DB for knowledge storage and retrieval
     - Streamlit for the user interface
     """)

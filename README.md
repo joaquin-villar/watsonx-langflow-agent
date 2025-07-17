@@ -3,11 +3,19 @@
 ## 🎯 Goal of the workshop
 Learn how to build a powerful, intelligent customer support agent using **DataStax Langflow**. You’ll start by creating a simple chatbot with **watsonx.ai** (IBM's generative AI platform), then enrich it with retrieval-augmented generation (RAG) by connecting it to your own FAQ knowledge base using **DataStax Astra DB**. Finally, you’ll add tools such as order lookups, product info access, calculators, and web tools to make your agent truly agentic—capable of reasoning, taking actions, and handling real-world customer support scenarios.
 
-By the end of this workshop, you’ll have a fully functional AI agent that can:
+Our fully functional Customer Support Agent will be able to:
 - Answer FAQs (unstructured documents) using vector-based document search
 - Retrieve live order and product details from structured data
-- Combine tools (like calculators and lookups) to generate multi-step responses
+- Combine tools (like calculators and structure data lookups) to generate multi-step responses
 - Adapt dynamically to user intent—just like a real support agent would
+
+By the end of the workshop you've learned:
+1. How to use **Astra DB** to store **structured and unstructured data**
+2. How to leverage the **Vectorize** functionality in Astra DB to transparantly **create Vector Embeddings**
+3. How to use **watsonx.ai** to use foundational models (LLMs)
+4. How to use **Langflow** to create **intelligent agents** utilizing multiple tools
+5. How to utilise the Customer Support Agent flow in a **customer facing app**
+6. How to publish the Customer Support agent as an **MCP server** and us it in Claude desktop
 
 ## 🛠️ Prerequisites
 This workshop assumes you have access to:
@@ -16,16 +24,16 @@ This workshop assumes you have access to:
 During the course, you'll gain access to the following by signing up for free:
 1. [DataStax Astra DB](https://astra.datastax.com) (you can sign up through your **public** Github account)
 2. [IBM watsonx.ai](https://www.ibm.com/products/watsonx-ai) (you can sign up for a free trial)
-3. [DataStax Langflow](https://langflow.org) access
+3. [DataStax Langflow](https://langflow.org)
 
-Follow the below steps and note down the **Astra DB API Endpoint**, **Astra DB ApplicationToken**, **watsonx.ai Project ID**, **watsonx.ai API Key** and **watsonx.ai URL** as we'll need them later on.
+Follow the below steps and note down the **Astra DB API Endpoint**, **Astra DB Application Token**, **watsonx.ai Project ID**, **watsonx.ai API Key** and **watsonx.ai URL** as we'll need them later on.
 
 ### Sign up for DataStax Astra DB
 Make sure you have a vector-capable Astra database (get one for free at [astra.datastax.com](https://astra.datastax.com))
 - Sign up or log in
 - Click `Databases` and click `Create Database` 
 - Select `Serverless (Vector)`, type a database name, i.e. `support_agent` and select `AWS` as Cloud Provider and `us-east-2` as Region
-    - ⚠️ Please stick to these settings as that enables us to use the [Astra Vectorize](https://www.datastax.com/blog/simplifying-vector-embedding-generation-with-astra-vectorize) functionality
+    - ⚠️ Stick to these settings as that enables us to use the [Astra Vectorize](https://www.datastax.com/blog/simplifying-vector-embedding-generation-with-astra-vectorize) functionality
 - Wait a few minutes for it to provision
 - Note down the **API Endpoint** which can be found in the right pane underneath *Database details*.
 - Click on `Generate Token` and give it a name, i.e. `support_agent-token` and click `Generate`. Now click on the copy button and paste the **Application Token** somewhere for later use
@@ -51,40 +59,28 @@ There are several way to gain access to Langflow. Pick the one that suits you be
 - (easiest 🤩) Just follow the instructions and use Github Codespaces in this tuturial
 
 ### ⚡️ Open this tutorial on Github Codespaces
-To make life easier, we'll use the awesome Github Codespace functionality. Github offers you a completely integrated developer experience and resources to get started quickly. How?
+To make life easier, we'll use the awesome Github Codespace functionality. Github offers you a smooth cloud-based developer experience to get started quickly. How?
 
 1. Open the [watsonx-langflow-agent](https://github.com/michelderu/watsonx-langflow-agent) repository
-2. Click on `Use this template`->`Ceate new repository` as follows:
+2. Click on `Use this template`->`Open in a codespace` as follows:
 
-    ![codespace](./assets/create-new-repository.png)
+    ![github-open-in-codespace](./assets/github-open-in-codespace.png)
 
-3. Now select **your** github account and name the new repository (any name or just use `watsonx-langflow-agent`). Ideally also set the description. Click `Create repository`
+    🎉 Congratulations, you just started your cloud IDE in which we'll work from here.
 
-    ![codespace](./assets/repository-name.png)
-
-4. Cool! You just created a copy in your own Gihub account! Now let's get started with coding. Click `Create codespace on main` as follows:
-
-    ![create-codespace](./assets/create-codespace.png)
+    💡 In case you want to keep you changes, you can also opt to 'fork' the repo by clicking `Create a new repository`. This will also enable you to check out the code locally and run from your own machine.
 
 5. Configure the secrets as follows:
 
-- Copy `.env.example` to `.env`
+- Copy `.env.example` and then paste it. Now rename the copy to `.env`
+
+    ![codespace](./assets/codespaces.png)
+
 - Edit `.env` and provide the required variables:
     - `WATSONX_PROJECT_ID` (your watsonx.ai project ID)
     - `WATSONX_API_ENDPOINT` (your watsonx.ai endpoint, e.g. `https://us-south.ml.cloud.ibm.com`)
     - `WATSONX_API_KEY` (your watsonx.ai API key)
     - `ASTRA_DB_API_ENDPOINT` and `ASTRA_DB_APPLICATION_TOKEN`
-
-    Example `.env`:
-    ```env
-    WATSONX_PROJECT_ID=your-watsonx-project-id
-    WATSONX_API_ENDPOINT=https://eu-de.ml.cloud.ibm.com
-    WATSONX_API_KEY=your-watsonx-api-key
-    ASTRA_DB_API_ENDPOINT=your-astra-endpoint
-    ASTRA_DB_APPLICATION_TOKEN=your-astra-token
-    ```
-
-    ![codespace](./assets/codespaces.png)
 
 6. Now we can run Langflow as follows in the terminal window:
 
@@ -93,6 +89,7 @@ To make life easier, we'll use the awesome Github Codespace functionality. Githu
     uv sync
     uv run langflow run --env-file .env
     ```
+    ![run-langflow](./assets/run-langflow.png)
 
     This starts Langflow and opens a port to your Codespace in the cloud. In case you lose track of the URL to Langflow, just click on `PORTS` in the terminal window.
 
@@ -207,8 +204,8 @@ As a response we get a generic answer OR the agent just stops because of too man
 #### Steps: Add some articles to our knowledge base
 Extend your flow with the following additional flow (scroll down a bit for a blank piece of canvas):
 1. Collapse `Data` and drag `File` to the canvas
-2. Click on `Upload a file` and upload [./data/Company_FAQ.pdf](./data/Company_FAQ.pdf) from this repository (you'll have to download it first)
-3. Collapse `Processing` and drag `Split Text` to the canvas
+2. Click on `Upload a file` and upload [./data/Company_FAQ.pdf](./data/Company_FAQ.pdf) from this repository (you'll have to download it to your machine first)
+3. Collapse `Processing` and drag `Split Text` to the canvas in order to chunk the content
 4. Set the `Chunk size` to 500 (because NV-Embed-QA only allows 512 tokens at maximum) and `Chunk overlap` to 100 (so that every chunk has a bit of information from the previous one)
 5. Collapse `Vector Stores` and drag `Astra DB` to the canvas
 6. Make sure the `Astra DB Application Token` is configured, then select your `support_agent` database and `company_faq` collection
@@ -331,7 +328,10 @@ In this step we'll create a simple Python app that runs the Langflow flow.
 #### Steps: Use the Langflow API endpoint in Python
 1. In Langflow exit the Playground and click on `Share` in the right top corner and then click `API Access`
 2. Click on `Python`
-3. Copy the code and paste it in a new file called `flow.py`
+
+    ![langflow-python-api](./assets/langflow-python-api.png)
+
+3. Copy the code, use your Codespaces cloud IDE and paste it in a new file called `flow.py`
     - Change the `url` variable on line to 10 to `http://localhost:7860`, make sure to keep the full path (`/api/...`)!
     - Change the `input_value` variable on line 16 to something like '*How can I cancel order 1001 and what is the shipping policy?*'
 5. Save the file
@@ -340,9 +340,12 @@ In this step we'll create a simple Python app that runs the Langflow flow.
 8. Make note of the generated API Key
     - ⚠️ This is the only time you'll see it, so make sure you save it somewhere handy!
 
-![langflow-python-api](./assets/langflow-python-api.png)
+Let's run it!  
+Return to your Codespaces Cloud IDE and open a new Terminal window by clicking the `+` sign:
 
-Let's run it!
+![codespaces-new-terminal](./assets/codespaces-new-terminal.png)
+
+Now copy-past the following in the terminal and hit Enter:
 
 ```bash
 export LANGFLOW_API_KEY=<your just generated API key>
@@ -354,10 +357,8 @@ The answer you're probably looking for is located inside the JSONPath `$.outputs
 
 If you change line 31 to the following, you'll see the actual response: `print(response.json()['outputs'][0]['outputs'][0]['results']['message']['text'])`
 
-💡 If you want to use watsonx.ai directly in your Python code, see the [watsonx.ai Python SDK documentation](https://ibm.github.io/watsonx-ai-python-sdk/). You can use the SDK to call the LLM endpoint with your API key, project ID, and prompt.
-
 ### 6. 🤩 Add a visual front-end app
-In this step we'll use a simple Streamlit app that supports Customer Support Agents.
+In this step we'll use a simple Streamlit app that implements a Customer Support Agent.
 
 ⚠️ You need the Flow ID of your flow which can be found as the unique ID following `.../flow/` in the URL of Langflow while your Flow is open. Otherwise you can find it on line 10 in `flow.py`  following `.../run/`.
 
@@ -367,6 +368,8 @@ export LANGFLOW_API_KEY=<your just generated API key>
 export LANGFLOW_FLOW_ID=<your flow id>
 uv run streamlit run app.py
 ```
+
+Now click `Open in browser` and the App will open:
 
 ![streamlit-front-end](./assets/streamlit-front-end.png)
 
@@ -378,31 +381,38 @@ MCP helps you build agents and complex workflows on top of LLMs. LLMs frequently
 
 Langflow easily enables you to publish your flows as an MCP server. Let see how!
 
-#### Steps: Publish the flow as MCP server
-1. Go back to your Langflow canvas
-2. Click `Share` and `MCP Server`
-3. Click `Edit Tools` and ensure the Tool name and Tool description describe something meaningful
-    ![mcp-tool](./assets/mcp-tool.png)
-3. Select the `JSON` tab and your preferred environment
-4. Copy the configuration and store it somewhere for later use
-
-#### Steps: Enable Claude desktop to call Langflow MCP
+#### Download Claude desktop
 1. Download [Claude Desktop](https://claude.ai/download)
 2. Create a (free) account and sign in
-3. Click `Settings` and `Developer`
-4. Click `Edit Config`, right-click `claude_desktop_config.json` and open it with your favorite IDE
-5. Now paste the JSON contents from Langflow and save it
-    - ⚠️ You may need to define the full path to `uvx`. On a linux based environment use `which uvx` to find out where it's installed. See the example below:
+
+#### Publish the flow as MCP server
+3. Go back to your Langflow canvas
+4. Click `Share` and `MCP Server`
+5. Click `Edit Tools` and ensure the Tool name and Tool description describe something meaningful. Also make sure the checkbox is checked.
+    ![mcp-tool](./assets/mcp-tool.png)
+6. Click `JSON`, select your environment and click the copy button
+
+#### Configure Claude desktop to invoke the MCP server
+
+7. Open Claude desktop
+8. Click `Settings` and `Developer`
+9. Click `Edit Config`, right-click `claude_desktop_config.json` and open it with your favorite IDE
+10. Now paste the JSON contents from Langflow and save it
+    ⚠️ You may need to define the full path to uvx. On a linux based environment use which uvx to find out where it's installed. See the example below:
 
     ![claude-config](./assets/claude-config.png)
 
-6. Restart Claude desktop to load the new config and allow Claude to read the tool availability
+11. Restart Claude desktop to load the new config and allow Claude to read the tool availability
 
-🥳 You did it! You now have access to the Langflow flow through a MCP client. Run a query like:
+🥳 You did it! You now have access to the Langflow flow through a MCP client. To confirm the MCP server is accesible, click on the setting button. You should see the `lf-starter_project` being available. Upon clicking it, you'll see the `customer_support_agent` tool availability.
+
+![claude-mcp-server](/assets/claude-mcp-server.png)
+
+Run a query like:
 
     What's the status of my order 1001
 
-And you'll get something back like:
+Claude will ask you for approval to invoke the Customer Support Agent tool and you'll get something back like:
 
 ![claude-desktop](./assets/claude-desktop.png)
 
